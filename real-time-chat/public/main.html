@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form with Age Calculation and Image Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: radial-gradient(circle, rgba(2,0,36,1) 0%, rgba(78,9,121,1) 35%, rgba(0,212,255,1) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            position: relative; /* Added for positioning of chat button */
+        }
+
+        .form-container h2 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            color: #333;
+            text-align: center;
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        /* Specific label colors */
+        .form-container label[for="name"],
+        .form-container label[for="dob"],
+        .form-container label[for="location"],
+        .form-container label[for="subject"],
+        .form-container label[for="media"],
+        .form-container label[for="phoneNumber"],
+        .form-container label[for="otpCode"] {
+            color: #a733ff;
+        }
+
+        .form-container input,
+        .form-container select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            color: #333;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Add colorful border and glow effect on focus */
+        .form-container input:focus,
+        .form-container select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+            outline: none;
+        }
+
+        /* Hover effect for input fields */
+        .form-container input:hover,
+        .form-container select:hover {
+            border-color: #00c4ff;
+        }
+
+        /* Style the submit button */
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Hover effect for submit button */
+        .form-container button:hover {
+            background-color: #0056b3;
+            box-shadow: 0 0 8px rgba(0, 86, 179, 0.5);
+        }
+
+        .weather-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .weather-container p {
+            font-size: 1.2em;
+            color: #007bff;
+        }
+
+        /* Chat button styles */
+        #chatButton {
+            position: absolute;
+            right: -60px;
+            top: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        #chatButton:hover {
+            background-color: #0056b3;
+        }
+
+        /* Popup styles */
+        #chatPopup {
+            display: none;
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            width: 300px;
+            height: 400px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .popup-header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .popup-content {
+            padding: 10px;
+            overflow-y: auto;
+            height: calc(100% - 40px);
+        }
+
+        .closeButton {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            float: right;
+            margin-top: -5px;
+            margin-right: 5px;
+            font-size: 18px;
+        }
+
+        .switch-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .switch-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="weather-container">
+            <p id="weather">Loading weather...</p>
+        </div>
+
+        <h2>Student Information Form</h2>
+        <form id="studentForm" method="POST" action="/submit-form" enctype="multipart/form-data">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="dob">Date of Birth (dd/mm/yyyy):</label>
+            <input type="date" id="dob" name="dob" min="2000-01-01" max="2010-12-31" placeholder="dd/mm/yyyy" required>
+
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" required>
+
+            <label for="subject">Subject:</label>
+            <select id="subject" name="subject" required>
+                <option value="" disabled selected>Select a subject</option>
+                <option value="Mathematics">Mathematics</option>
+                <option value="Science">Science</option>
+                <option value="History">History</option>
+                <option value="Literature">Literature</option>
+            </select>
+
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="+14155552671" required>
+
+            <button type="button" id="sendOtpButton">Send OTP</button>
+
+            <label for="otpCode" id="otpLabel" style="display:none;">OTP Code:</label>
+            <input type="text" id="otpCode" name="otpCode" style="display:none;">
+
+            <label for="media">Upload JPG Image (5KB - 50KB):</label>
+            <input type="file" id="media" name="media" accept="image/jpeg" required>
+
+            <button type="submit" id="submitButton" style="display:none;">Submit</button>
+
+            <div>
+                <p id="result"></p>
+            </div>
+        </form>
+
+        <!-- Chat button -->
+        <button id="chatButton">Chat</button>
+    </div>
+
+    <!-- Chat Popup -->
+    <div id="chatPopup">
+        <div class="popup-header">
+            <button class="closeButton" onclick="closeChatPopup()">×</button>
+            Chat Dashboard
+        </div>
+        <div class="popup-content">
+            <button class="switch-button" onclick="loadContent('admin.html')">Admin Dashboard</button>
+            <button class="switch-button" onclick="loadContent('student.html')">Student Dashboard</button>
+            <div id="popupContent">
+                <!-- Here you can add your student dashboard content -->
+                <h3>Welcome to the Student Dashboard!</h3>
+                <p>This is where students can view their details and perform actions.</p>
+                <p>Add your student dashboard content here...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to close the chat popup
+        function closeChatPopup() {
+            document.getElementById("chatPopup").style.display = "none";
+        }
+
+        // Function to load content into the popup
+        function loadContent(file) {
+            fetch(file)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById("popupContent").innerHTML = data;
+                })
+                .catch(error => console.error('Error loading content:', error));
+        }
+
+        // Show chat popup when the chat button is clicked
+        document.getElementById("chatButton").onclick = function () {
+            document.getElementById("chatPopup").style.display = "block";
+        };
+
+        // Optional: Load the admin dashboard by default when the popup opens
+        document.getElementById("chatButton").onclick = function () {
+            document.getElementById("chatPopup").style.display = "block";
+            loadContent('admin.html'); // Load admin dashboard by default
+        };
+
+        // Optional: Weather API call can be added here
+    </script>
+</body>
+</html>

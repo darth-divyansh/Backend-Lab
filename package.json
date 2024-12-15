@@ -1,0 +1,22 @@
+{
+  "name": "mongodb-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "joi": "^17.13.3",
+    "mongoose": "^8.5.4",
+    "multer": "^1.4.5-lts.1",
+    "twilio": "^5.3.2",
+    "twitter-api-sdk": "^1.2.1",
+    "twitter-api-v2": "^1.17.2"
+  }
+}

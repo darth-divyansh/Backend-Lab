@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Chat</title>
+  <link rel="stylesheet" href="student.css">
+</head>
+<body>
+  <h1>Student Chat</h1>
+  <div id="studentIdDisplay"></div>
+  <div id="chatWindow"></div>
+  <input type="text" id="messageInput" placeholder="Type your message">
+  <button id="sendMessage">Send</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    let studentId = ''; // Placeholder for studentId
+
+    // Display studentId when assigned by server
+    socket.on('assignId', ({ studentId: id }) => {
+      studentId = id;
+      document.getElementById('studentIdDisplay').innerText = `You are: ${studentId}`;
+    });
+
+    const chatWindow = document.getElementById('chatWindow');
+    const messageInput = document.getElementById('messageInput');
+    const sendMessageButton = document.getElementById('sendMessage');
+
+    // Handle sending messages to the admin
+    sendMessageButton.addEventListener('click', () => {
+      const message = messageInput.value;
+      socket.emit('studentMessage', { studentId, message });
+      chatWindow.innerHTML += `<p>You: ${message}</p>`;
+      messageInput.value = '';
+    });
+
+    // Receive messages from admin
+    socket.on('messageFromAdmin', ({ message }) => {
+      chatWindow.innerHTML += `<p>Admin: ${message}</p>`;
+    });
+  </script>
+</body>
+</html>

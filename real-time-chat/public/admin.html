@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <h1>Admin Dashboard</h1>
+  <div id="chatWindow"></div>
+
+  <!-- Input for sending message to a specific student -->
+  <input type="text" id="studentIdInput" placeholder="Student ID">
+  <input type="text" id="messageInput" placeholder="Type your response">
+  <button id="sendMessage">Send to Student</button>
+  
+  <hr>
+
+  <!-- Input for broadcasting a message to all students -->
+  <input type="text" id="broadcastMessageInput" placeholder="Type a broadcast message">
+  <button id="broadcastMessageButton">Send to All Students</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    const chatWindow = document.getElementById('chatWindow');
+    const studentIdInput = document.getElementById('studentIdInput');
+    const messageInput = document.getElementById('messageInput');
+    const sendMessageButton = document.getElementById('sendMessage');
+
+    const broadcastMessageInput = document.getElementById('broadcastMessageInput');
+    const broadcastMessageButton = document.getElementById('broadcastMessageButton');
+
+    // Handle receiving messages from students
+    socket.on('messageFromStudent', ({ studentId, message }) => {
+      chatWindow.innerHTML += `<p>${studentId}: ${message}</p>`;
+    });
+
+    // Handle sending messages to a specific student
+    sendMessageButton.addEventListener('click', () => {
+      const studentId = studentIdInput.value;
+      const message = messageInput.value;
+      socket.emit('adminMessage', { studentId, message });
+      chatWindow.innerHTML += `<p>You (to ${studentId}): ${message}</p>`;
+      messageInput.value = '';
+    });
+
+    // Handle sending a broadcast message to all students
+    broadcastMessageButton.addEventListener('click', () => {
+      const message = broadcastMessageInput.value;
+      socket.emit('adminBroadcastMessage', { message });
+      chatWindow.innerHTML += `<p>You (broadcast): ${message}</p>`;
+      broadcastMessageInput.value = '';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form with Age Calculation and Image Upload</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: radial-gradient(circle, rgba(2,0,36,1) 0%, rgba(78,9,121,1) 35%, rgba(0,212,255,1) 100%); 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .form-container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 300px;
+    }
+
+    .form-container h2 {
+        margin-bottom: 20px;
+        font-size: 1.5em;
+        color: #333;
+        text-align: center;
+    }
+
+    .form-container label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    /* Specific label colors */
+    .form-container label[for="name"] {
+        color: #a733ff; 
+    }
+
+    .form-container label[for="dob"] {
+        color: #a733ff; 
+    }
+
+    .form-container label[for="location"] {
+        color: #a733ff; 
+    }
+
+    .form-container label[for="subject"] {
+        color: #a733ff; 
+    }
+
+    .form-container label[for="media"] {
+        color: #a733ff; 
+    }
+
+    .form-container input,
+    .form-container select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+        color: #333;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* Add colorful border and glow effect on focus */
+    .form-container input:focus,
+    .form-container select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+        outline: none;
+    }
+
+    /* Hover effect for input fields */
+    .form-container input:hover,
+    .form-container select:hover {
+        border-color: #00c4ff;
+    }
+
+    /* Style the submit button */
+    .form-container button {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* Hover effect for submit button */
+    .form-container button:hover {
+        background-color: #0056b3;
+        box-shadow: 0 0 8px rgba(0, 86, 179, 0.5);
+    }
+
+    .weather-container {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .weather-container p {
+        font-size: 1.2em;
+        color: #007bff;
+    }
+</style>
+<body>
+    <div class="form-container">
+        <!-- Weather Section -->
+        <div class="weather-container">
+            <p id="weather">Loading weather...</p>
+        </div>
+
+        <h2>Student Information Form</h2>
+        <form id="studentForm" method="POST" action="/submit-form" enctype="multipart/form-data">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+    
+            <label for="dob">Date of Birth (dd/mm/yyyy):</label>
+            <input type="date" id="dob" name="dob" min="2000-01-01" max="2010-12-31" required>
+    
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" required>
+    
+            <label for="subject">Subject:</label>
+            <select id="subject" name="subject" required>
+                <option value="" disabled selected>Select a subject</option>
+                <option value="Mathematics">Mathematics</option>
+                <option value="Science">Science</option>
+                <option value="History">History</option>
+                <option value="Literature">Literature</option>
+            </select>
+    
+            <label for="media">Upload JPG Image (5KB - 50KB):</label>
+            <input type="file" id="media" name="media" accept="image/jpeg" required>
+    
+            <button type="submit">Submit</button>
+            <div id="">
+                <p id="result"></p>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("studentForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let name = document.getElementById("name").value;
+            let dob = document.getElementById("dob").value;
+            let location = document.getElementById("location").value;
+            let subject = document.getElementById("subject").value;
+            let media = document.getElementById("media").files[0];
+            
+            if (!/^[a-zA-Z\s]+$/.test(name)) {
+                alert("Name must not contain special characters.");
+                return;
+            }
+
+            if (name === "" || dob === "" || location === "" || subject === "" || !media) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            let age = calculateAge(dob);
+            if (age === -1) {
+                alert("Please enter a valid date of birth.");
+                return;
+            }
+
+            // Check image size (min 5KB, max 50KB)
+            if (media.size < 5 * 1024 || media.size > 50 * 1024) {
+                alert("Image size should be between 5KB and 50KB.");
+                return;
+            }
+
+            alert("Name: " + name + "\nAge: " + age + " years" + "\nLocation: " + location + "\nSubject: " + subject);
+            document.getElementById('result').textContent = `Hello ${name}, you are ${Math.floor(age)} years old, live at ${location}, and your favorite subject is ${subject}.`;
+
+            this.submit();
+        });
+
+        function calculateAge(dob) {
+            let [year, month, day] = dob.split('-').map(Number);
+            let birthDate = new Date(year, month - 1, day);
+            let today = new Date();
+            
+            if (birthDate > today || isNaN(birthDate)) return -1;
+
+            let age = today.getFullYear() - birthDate.getFullYear();
+            if (today.getMonth() < birthDate.getMonth() || 
+                (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            
+            return age;
+        }
+
+        // Fetch weather information from WeatherAPI
+        async function fetchWeather() {
+            const apiKey = 'b7d0132a74e3434fb5293105242409'; // Replace with your WeatherAPI key
+            const city = 'Delhi  ';
+            const url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&aqi=no`;
+
+            try {
+                let response = await fetch(url);
+                if (!response.ok) throw new Error('Weather data not available');
+                let data = await response.json();
+                let weatherInfo = `Current Weather in ${city}: ${data.current.temp_c}°C, ${data.current.condition.text}`;
+                document.getElementById('weather').textContent = weatherInfo;
+            } catch (error) {
+                document.getElementById('weather').textContent = 'Weather information not available';
+                console.error('Error fetching weather:', error);
+            }
+        }
+
+        // Call the function on page load
+        fetchWeather();
+    </script>
+</body>
+</html>
