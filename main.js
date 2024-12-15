@@ -10,9 +10,9 @@ const twilio = require('twilio'); // Import Twilio
 // const { TwitterApi } = require('twitter-api-v2'); // Import Twitter API client
 
 // Twilio Credentials
-const TWILIO_ACCOUNT_SID = 'AC34e604c6721f50d6354750a970ca7079';
-const TWILIO_AUTH_TOKEN = '597bd326abdeafe24c03c02a635f4308';
-const TWILIO_SERVICE_SID = 'VA2aec219fafee2c3dfd046ac2f09b2a26';
+const TWILIO_ACCOUNT_SID = '';
+const TWILIO_AUTH_TOKEN = '';
+const TWILIO_SERVICE_SID = '';
 
 const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 
